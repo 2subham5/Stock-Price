@@ -1,0 +1,32 @@
+
+.customContainer{
+    background-color: #26355D;
+   
+    height: 34rem;
+    
+    
+    
+}
+.top-background{
+    width: 100vw;
+    background-image: url(../src/Images/bcg.jpg);
+}
+.stock-text{
+    background-color:#F3F7EC ;
+}
+.stock-box{
+    height: 13rem;
+    width: 14rem;
+    padding-top: 2rem
+   
+}
+.stock-result{
+    background-color: #006989;
+    width: 17rem;
+    height: 8rem;
+    padding-top: 2rem;
+    padding-left: 2rem;
+    padding-bottom: 0rem;
+    padding: 2rem 0 0 2rem;
+    margin-bottom: 15px;
+}
