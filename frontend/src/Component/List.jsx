@@ -4,7 +4,9 @@ import { Button, Typography, List as MUIList, ListItem, ListItemText, Container,
 import { useNavigate } from "react-router-dom";
 import "./List.css"
 const List = () => {
+    // to move to another route
     const navigate = useNavigate();
+    // available symbol in finnhub documentation for stocks
     const symbols = [
         'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'FB', 'NVDA', 'NFLX', 'ADBE', 'PYPL',
         'CRM', 'V', 'WMT', 'JNJ', 'PG', 'BAC', 'JPM', 'KO', 'PFE', 'XOM'
@@ -23,6 +25,7 @@ const List = () => {
                     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
                 }}
             >
+            {/* mui Typography is used */}
                 <Typography variant="h4" gutterBottom color="primary">
                     List of Stocks
                 </Typography>

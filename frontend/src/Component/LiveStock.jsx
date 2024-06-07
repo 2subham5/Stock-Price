@@ -1,5 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import { Container, Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
+// retrive data from getLiveStockPrice function
 import { getLiveStockPrice } from './Stock';
 import { useNavigate } from "react-router-dom";
 import "./LiveStock.css"
@@ -9,13 +10,15 @@ const LiveStock = () => {
     const [stockPrice, setStockPrice] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+// take the userInput for stock symbol
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // if the string is empty it won't give result
         if (symbol.trim() !== '') {
             try {
                 setLoading(true);
                 const response = await getLiveStockPrice(symbol.toUpperCase());
+                //set stock price whatever response is being fetched
                 setStockPrice(response.data);
                 setError(null);
             } catch (err) {
@@ -25,7 +28,11 @@ const LiveStock = () => {
                 setLoading(false);
             }
         }
+        else{
+            console.log("Give input");
+        }
     };
+    // to render once
     useEffect(()=>{
     handleSubmit();
     const interval = setInterval(handleSubmit, 60000); // Refresh every minute
@@ -71,6 +78,7 @@ const LiveStock = () => {
                     Check All Stocks
                 </Button>
                     </Box>
+                    {/* while the data fetch it shows loader */}
                     {loading && (
                         <Box sx={{ mt: 2 }}>
                             <CircularProgress size={24} />
@@ -81,6 +89,7 @@ const LiveStock = () => {
                             Error: {error}
                         </Typography>
                     )}
+                    {/* when the data is fetched  */}
                     {stockPrice && (
                         <Box className="stock-result" sx={{ mt: 2 }}>
                             <Typography variant="body1">

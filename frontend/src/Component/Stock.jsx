@@ -8,16 +8,7 @@ const finnhubClient = axios.create({
     },
 });
 
-export const getStockCandles = (symbol, resolution, from, to) => {
-    return finnhubClient.get('stock/candle', {
-        params: {
-            symbol,
-            resolution,
-            from,
-            to,
-        },
-    });
-};
+
 // to get the response 
 export const getLiveStockPrices = (symbol, callback) => {
     finnhubClient.quote(symbol, (error, data, response) => {
