@@ -1,190 +1,7 @@
-// import React, { useState, useEffect } from 'react';
-// import { Container, Box, Typography, TextField, Button, CircularProgress, Paper, Grid } from '@mui/material';
-// import { useNavigate } from "react-router-dom";
-// import { styled } from '@mui/material/styles';
-// import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-// import { getLiveStockPrices, getData } from './Stock';
-
-// const StyledContainer = styled(Container)(({ theme }) => ({
-//     display: 'flex',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     minHeight: '100vh',
-//     minWidth: '100vw',
-// }));
-
-// const StyledPaper = styled(Paper)(({ theme }) => ({
-//     padding: theme.spacing(4),
-//     display: 'flex',
-//     flexDirection: 'column',
-//     alignItems: 'center',
-//     borderRadius: '15px',
-//     boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-// }));
-
-// const StyledButton = styled(Button)(({ theme }) => ({
-//     margin: theme.spacing(1),
-//     padding: theme.spacing(1, 4),
-// }));
-
-// const LiveStock = () => {
-//     const navigate = useNavigate();
-//     const [symbol, setSymbol] = useState('');
-//     const [stockPrice, setStockPrice] = useState(null);
-//     const [historicalData, setHistoricalData] = useState([]);
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState(null);
-
-//     useEffect(() => {
-//         const params = new URLSearchParams(window.location.search);
-//         const symbolParam = params.get('symbol');
-//         if (symbolParam) {
-//             setSymbol(symbolParam);
-//             handleSubmit(symbolParam); // Fetch stock data on load
-//         }
-//     }, []);
-
-//     const handleSubmit = async (inputSymbol) => {
-//         const stockSymbol = inputSymbol || symbol;
-//         if (stockSymbol.trim() === '') return;
-
-//         setLoading(true);
-//         setError(null); // Reset error before making the API calls
-
-//         // Fetch live stock prices
-//         getLiveStockPrices(stockSymbol.toUpperCase(), (err, data) => {
-//             if (err) {
-//                 setError(err.message);
-//                 setStockPrice(null);
-//             } else {
-//                 if (data && data['Global Quote']) {
-//                     setStockPrice(data['Global Quote']);
-//                 } else {
-//                     setError('No data available for this symbol.');
-//                     setStockPrice(null);
-//                 }
-//             }
-//             setLoading(false);
-//         });
-
-//         // Fetch historical data
-//         getData(stockSymbol.toUpperCase(), (err, data) => {
-//             if (err) {
-//                 setError(err.message);
-//                 setHistoricalData([]);
-//             } else {
-//                 const timeSeries = data['Time Series (Daily)'];
-//                 const formattedData = Object.keys(timeSeries).map(date => ({
-//                     date,
-//                     price: parseFloat(timeSeries[date]['4. close']),
-//                 }));
-//                 setHistoricalData(formattedData);
-//             }
-//         });
-//     };
-
-//     useEffect(() => {
-//         if (symbol) {
-//             const interval = setInterval(() => handleSubmit(symbol), 60000);
-//             return () => clearInterval(interval);
-//         }
-//     }, [symbol]);
-
-//     return (
-//         <StyledContainer maxWidth="sm" className="customContainer">
-//             <StyledPaper elevation={3}>
-//                 <Typography component="h1" variant="h4" gutterBottom>
-//                     Stock Live
-//                 </Typography>
-//                 <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} sx={{ width: '100%', mt: 2 }}>
-//                     <TextField
-//                         fullWidth
-//                         variant="outlined"
-//                         label="Stock Symbol"
-//                         value={symbol}
-//                         onChange={(e) => setSymbol(e.target.value)}
-//                         margin="normal"
-//                     />
-//                     <Grid container spacing={2} justifyContent="center">
-//                         <Grid item>
-//                             <StyledButton type="submit" variant="contained" color="primary">
-//                                 Get Price
-//                             </StyledButton>
-//                         </Grid>
-//                         <Grid item>
-//                             <StyledButton variant="outlined" color="secondary" onClick={() => navigate("/")}>
-//                                 Check All Stocks
-//                             </StyledButton>
-//                         </Grid>
-//                         {stockPrice && (
-//                             <Grid item>
-//                                 <StyledButton variant="outlined" color="primary" onClick={() => navigate(`/graph?symbol=${symbol}`)}>
-//                                     View Graph
-//                                 </StyledButton>
-//                             </Grid>
-//                         )}
-//                     </Grid>
-//                 </Box>
-//                 {loading && <CircularProgress sx={{ mt: 2 }} />}
-//                 {error && (
-//                     <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-//                         Error: {error}
-//                     </Typography>
-//                 )}
-//                 {stockPrice && (
-//                     <Box sx={{ mt: 3, textAlign: 'center' }}>
-//                         <Typography variant="h6" gutterBottom>Stock Price Information</Typography>
-//                         <Grid container spacing={2}>
-//                             {[
-//                                 { label: 'Symbol', value: stockPrice["01. symbol"] },
-//                                 { label: 'Open', value: stockPrice["02. open"] },
-//                                 { label: 'High', value: stockPrice["03. high"] },
-//                                 { label: 'Low', value: stockPrice["04. low"] },
-//                                 { label: 'Current Price', value: stockPrice["05. price"] },
-//                                 { label: 'Volume', value: stockPrice["06. volume"] },
-//                                 { label: 'Latest Trading Day', value: stockPrice["07. latest trading day"] },
-//                                 { label: 'Previous Close', value: stockPrice["08. previous close"] },
-//                                 { label: 'Change', value: stockPrice["09. change"] },
-//                                 { label: 'Change Percent', value: stockPrice["10. change percent"] },
-//                             ].map((item) => (
-//                                 <Grid item xs={6} key={item.label}>
-//                                     <Paper elevation={2} sx={{ p: 2 }}>
-//                                         <Typography variant="body2" color="textSecondary">{item.label}</Typography>
-//                                         <Typography variant="h6">
-//                                             {item.label === 'Change Percent' || item.label === 'Change'
-//                                                 ? item.value
-//                                                 : `$${item.value}`}
-//                                         </Typography>
-//                                     </Paper>
-//                                 </Grid>
-//                             ))}
-//                         </Grid>
-//                     </Box>
-//                 )}
-//                 {historicalData.length > 0 && (
-//                     <Box sx={{ mt: 4 }}>
-//                         <Typography variant="h6" gutterBottom>Historical Price Data</Typography>
-//                         <ResponsiveContainer width="100%" height={300}>
-//                             <LineChart data={historicalData}>
-//                                 <Line type="monotone" dataKey="price" stroke="#8884d8" />
-//                                 <CartesianGrid stroke="#ccc" />
-//                                 <XAxis dataKey="date" />
-//                                 <YAxis />
-//                                 <Tooltip />
-//                             </LineChart>
-//                         </ResponsiveContainer>
-//                     </Box>
-//                 )}
-//             </StyledPaper>
-//         </StyledContainer>
-//     );
-// };
-
-// export default LiveStock;
-
 
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { fetchGlobalQuote,fetchHistoricalData,fetchNewsData} from './Stock';
 import {
   TextField,
   Button,
@@ -331,25 +148,17 @@ function App() {
 
   const fetchStockData = async () => {
     if (!symbol) return;
-
+  
     setError("");
     setStockData(null);
     setHistoricalData(null);
     setNewsData(null);
-
+  
     try {
       setLoading(true);
-      const globalQuoteResponse = await axios.get(
-        `https://www.alphavantage.co/query`,
-        {
-          params: {
-            function: "GLOBAL_QUOTE",
-            symbol: symbol,
-            apikey: API_KEY,
-          },
-        }
-      );
-      const globalQuoteData = globalQuoteResponse.data["Global Quote"];
+  
+      // Fetch Global Quote
+      const globalQuoteData = await fetchGlobalQuote(symbol);
       if (globalQuoteData) {
         setStockData(globalQuoteData);
       } else {
@@ -357,38 +166,16 @@ function App() {
         return;
       }
   
-      const historicalResponse = await axios.get(
-        `https://www.alphavantage.co/query`,
-        {
-          params: {
-            function: "TIME_SERIES_DAILY",
-            symbol: symbol,
-            apikey: API_KEY,
-          },
-        }
-      );
-      const historicalData = historicalResponse.data["Time Series (Daily)"];
+      // Fetch Historical Data
+      const historicalData = await fetchHistoricalData(symbol);
       if (historicalData) {
-        const chartData = Object.entries(historicalData)
-          .slice(0, 30)
-          .reverse();
-        setHistoricalData(chartData);
+        setHistoricalData(historicalData);
       }
-
-      const newsResponse = await axios.get(
-        `https://www.alphavantage.co/query`,
-        {
-          params: {
-            function: "NEWS_SENTIMENT",
-            tickers: symbol,
-            apikey: API_KEY,
-          },
-        }
-      );
-
-      const newsData = newsResponse.data.feed;
+  
+      // Fetch News Data
+      const newsData = await fetchNewsData(symbol);
       if (newsData) {
-        setNewsData(newsData.slice(0, 5)); // Display top 5 news items
+        setNewsData(newsData);
       }
     } catch (err) {
       setError("Error fetching data");
@@ -396,6 +183,7 @@ function App() {
       setLoading(false);
     }
   };
+  
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const symbolParam = params.get('symbol');
