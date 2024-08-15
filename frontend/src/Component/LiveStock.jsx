@@ -319,6 +319,12 @@ return (
                                     <Typography variant="h5" component="p">
                                         Price: ${parseFloat(stockData["05. price"]).toFixed(2)}
                                     </Typography>
+                                    <Typography variant="h5" component="p">
+                                        High: ${parseFloat(stockData["03. high"]).toFixed(2)}
+                                    </Typography>
+                                    <Typography variant="h5" component="p">
+                                        Low: ${parseFloat(stockData["04. low"]).toFixed(2)}
+                                    </Typography>
                                     <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                                         <Typography variant="body1" sx={{ mr: 1 }}>
                                             Change:
