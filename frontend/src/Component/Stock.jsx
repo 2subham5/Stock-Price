@@ -1,30 +1,44 @@
-import axios from "axios";
-const API_KEY = "cpg1ln1r01ql1vn3fi0gcpg1ln1r01ql1vn3fi10"; // Replace with your Finnhub API key
 
-const finnhubClient = axios.create({
-    baseURL: 'https://finnhub.io/api/v1/',
-    params: {
-        token: API_KEY,
-    },
+import axios from "axios";
+export const API_KEY = "R15KIHP60KJKIDS7"; // Alpha Vantage API key
+
+const alphaClient = axios.create({
+    baseURL: 'https://www.alphavantage.co/query',
 });
 
-
-// to get the response 
 export const getLiveStockPrices = (symbol, callback) => {
-    finnhubClient.quote(symbol, (error, data, response) => {
-        if (error) {
-            callback(error, null);
-        } else {
-            console.log(data); // Log the data to the console
-            callback(null, data);
-        }
-    });
-};
-export const getLiveStockPrice = (symbol) => {
-    return finnhubClient.get('quote', {
+    alphaClient.get('', {
         params: {
+            function: 'GLOBAL_QUOTE',
             symbol,
+            apikey: API_KEY,
         },
+    })
+    .then(response => {
+        console.log(response.data); // Log the data to the console
+        callback(null, response.data);
+    })
+    .catch(error => {
+        console.error('Error fetching stock price:', error); // Log the error
+        callback(error, null);
     });
 };
 
+export const getData = (symbol) => {
+    return alphaClient.get('', {
+        params: {
+            function: 'TIME_SERIES_DAILY', // Correct function name
+            symbol: symbol,
+            apikey: API_KEY, // Correct API key parameter
+        },
+    })
+    .then(response => {
+        console.log(response.data); // Log the data to the console
+        // callback(null, response.data);
+    })
+    .catch(error => {
+        console.error('Error fetching stock price:', error); // Log the error
+        // callback(error, null);
+    });
+}
+console.log(getData('AAPL'));
